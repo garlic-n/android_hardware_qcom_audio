@@ -698,6 +698,7 @@ int enable_snd_device(struct audio_device *adev,
     int i, num_devices = 0;
     snd_device_t new_snd_devices[SND_DEVICE_OUT_END];
     char device_name[DEVICE_NAME_MAX_SIZE] = {0};
+    struct mixer_ctl *ctl;
 
     if (snd_device < SND_DEVICE_MIN ||
         snd_device >= SND_DEVICE_MAX) {
@@ -717,6 +718,17 @@ int enable_snd_device(struct audio_device *adev,
         return 0;
     }
 
+    if (SND_DEVICE_OUT_VOICE_SPEAKER == snd_device) {
+         ALOGD("%s: %d: tfa98xx: set profile[%s]: %s.",
+              __func__, __LINE__, "mono Profile", "VOICE_48000");
+         ctl = mixer_get_ctl_by_name(adev->mixer, "mono Profile");
+         if (ctl) {
+              mixer_ctl_set_enum_by_string(ctl, "VOICE_48000");
+         } else {
+              ALOGD("%s: %d: tfa98xx: Could not get ctl for mixer command: %s",
+                   __func__, __LINE__, "mono Profile");
+         }
+    }
 
     if (audio_extn_spkr_prot_is_enabled())
          audio_extn_spkr_prot_calib_cancel(adev);
@@ -784,6 +796,7 @@ int disable_snd_device(struct audio_device *adev,
     int i, num_devices = 0;
     snd_device_t new_snd_devices[SND_DEVICE_OUT_END];
     char device_name[DEVICE_NAME_MAX_SIZE] = {0};
+    struct mixer_ctl *ctl;
 
     if (snd_device < SND_DEVICE_MIN ||
         snd_device >= SND_DEVICE_MAX) {
@@ -831,12 +844,22 @@ int disable_snd_device(struct audio_device *adev,
                                               "true-native-mode");
             adev->native_playback_enabled = false;
         }
-
         audio_extn_dev_arbi_release(snd_device);
         audio_extn_sound_trigger_update_device_status(snd_device,
                                         ST_EVENT_SND_DEVICE_FREE);
         audio_extn_listen_update_device_status(snd_device,
                                         LISTEN_EVENT_SND_DEVICE_FREE);
+
+        if (SND_DEVICE_OUT_VOICE_SPEAKER == snd_device) {
+            ALOGD("%s: %d: tfa98xx: set profile[%s]: %s.",
+                  __func__, __LINE__, "mono Profile", "MUSIC_48000");
+            ctl = mixer_get_ctl_by_name(adev->mixer, "mono Profile");
+            if (ctl)
+                mixer_ctl_set_enum_by_string(ctl, "MUSIC_48000");
+            else
+                ALOGD("%s: %d: tfa98xx: Could not get ctl for mixer command: %s",
+                      __func__, __LINE__, "mono Profile");
+        }
     }
 
     return 0;
