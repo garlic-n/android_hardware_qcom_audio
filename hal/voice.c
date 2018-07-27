@@ -389,6 +389,7 @@ snd_device_t voice_get_incall_rec_snd_device(snd_device_t in_snd_device)
     switch(in_snd_device) {
     case SND_DEVICE_IN_HANDSET_MIC:
     case SND_DEVICE_IN_VOICE_DMIC:
+    case SND_DEVICE_IN_SKYPE_DMIC:
     case SND_DEVICE_IN_AANC_HANDSET_MIC:
         incall_record_device = SND_DEVICE_IN_HANDSET_MIC;
         break;
