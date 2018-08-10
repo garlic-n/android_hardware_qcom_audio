@@ -325,7 +325,6 @@ static const char * const device_table[SND_DEVICE_MAX] = {
     [SND_DEVICE_NONE] = "none",
     /* Playback sound devices */
     [SND_DEVICE_OUT_HANDSET] = "handset",
-    [SND_DEVICE_OUT_SPEAKER] = "speaker",
     [SND_DEVICE_OUT_SPEAKER_EXTERNAL_1] = "speaker-ext-1",
     [SND_DEVICE_OUT_SPEAKER_EXTERNAL_2] = "speaker-ext-2",
     [SND_DEVICE_OUT_SPEAKER_WSA] = "wsa-speaker",
@@ -334,7 +333,6 @@ static const char * const device_table[SND_DEVICE_MAX] = {
     [SND_DEVICE_OUT_HEADPHONES] = "headphones",
     [SND_DEVICE_OUT_HEADPHONES_44_1] = "headphones-44.1",
     [SND_DEVICE_OUT_LINE] = "line",
-    [SND_DEVICE_OUT_SPEAKER_AND_HEADPHONES] = "speaker-and-headphones",
     [SND_DEVICE_OUT_SPEAKER_AND_LINE] = "speaker-and-line",
     [SND_DEVICE_OUT_SPEAKER_AND_HEADPHONES_EXTERNAL_1] = "speaker-and-headphones-ext-1",
     [SND_DEVICE_OUT_SPEAKER_AND_HEADPHONES_EXTERNAL_2] = "speaker-and-headphones-ext-2",
@@ -1151,6 +1149,32 @@ void platform_set_echo_reference(struct audio_device *adev, bool enable,
             my_data->ec_ref_mixer_path);
     }
 }
+
+void platform_set_echo_reference_skype_spk(struct audio_device *adev, bool enable,
+                                 audio_devices_t out_device __unused)
+{
+    struct platform_data *my_data = (struct platform_data *)adev->platform;
+     if (strcmp(my_data->ec_ref_mixer_path, "")) {
+        ALOGV("%s: disabling %s", __func__, my_data->ec_ref_mixer_path);
+        audio_route_reset_and_update_path(adev->audio_route,
+            my_data->ec_ref_mixer_path);
+    }
+     if (enable) {
+        if (adev->snd_dev_ref_cnt[SND_DEVICE_OUT_HEADPHONES_44_1] > 0)
+            strlcpy(my_data->ec_ref_mixer_path, "echo-reference headphones-44.1",
+                sizeof(my_data->ec_ref_mixer_path));
+        else if (adev->snd_dev_ref_cnt[SND_DEVICE_OUT_SPEAKER_VBAT] > 0)
+            strlcpy(my_data->ec_ref_mixer_path, "vbat-speaker echo-reference",
+                sizeof(my_data->ec_ref_mixer_path));
+        else
+            strlcpy(my_data->ec_ref_mixer_path, "echo-reference-tinno-skype",
+                sizeof(my_data->ec_ref_mixer_path));
+         ALOGD("%s: enabling %s", __func__, my_data->ec_ref_mixer_path);
+        audio_route_apply_and_update_path(adev->audio_route,
+            my_data->ec_ref_mixer_path);
+    }
+}
+
 void platform_set_gsm_mode(void *platform, bool enable)
 {
     struct platform_data *my_data = (struct platform_data *)platform;
@@ -1216,6 +1240,11 @@ static void set_platform_defaults(struct platform_data * my_data)
     backend_tag_table[SND_DEVICE_OUT_VOICE_SPEAKER_VBAT] = strdup("vbat-voice-speaker");
     backend_tag_table[SND_DEVICE_OUT_BT_A2DP] = strdup("bt-a2dp");
     backend_tag_table[SND_DEVICE_OUT_SPEAKER_AND_BT_A2DP] = strdup("speaker-and-bt-a2dp");
+
+    // Tinno
+    backend_tag_table[SND_DEVICE_OUT_SPEAKER] = strdup("speaker");
+    backend_tag_table[SND_DEVICE_OUT_VOICE_SPEAKER] = strdup("speaker");
+    backend_tag_table[SND_DEVICE_OUT_SPEAKER_AND_HEADPHONES] = strdup("speaker-and-headphones");
 
     hw_interface_table[SND_DEVICE_OUT_HDMI] = strdup("HDMI_RX");
     hw_interface_table[SND_DEVICE_OUT_SPEAKER_AND_HDMI] = strdup("SLIMBUS_0_RX-and-HDMI_RX");
@@ -2043,9 +2072,31 @@ int platform_get_snd_device_name_extn(void *platform, snd_device_t snd_device,
 void platform_add_backend_name(char *mixer_path, snd_device_t snd_device,
                                struct audio_usecase *usecase)
 {
+
+    const char * suffix = backend_tag_table[snd_device];
+
     if ((snd_device < SND_DEVICE_MIN) || (snd_device >= SND_DEVICE_MAX)) {
         ALOGE("%s: Invalid snd_device = %d", __func__, snd_device);
         return;
+    }
+
+    if (snd_device <= SND_DEVICE_OUT_VOICE_HANDSET) {
+        if (snd_device != SND_DEVICE_OUT_SPEAKER) {
+            if (snd_device == SND_DEVICE_OUT_SPEAKER_AND_HEADPHONES) {
+                ALOGE("%s: snd_device = %d usecase:%d", __func__, snd_device, usecase->id);
+                backend_tag_table[SND_DEVICE_OUT_SPEAKER_AND_HEADPHONES] =
+                    strdup("speaker-and-headphones");
+            }
+            goto result;
+        }
+        goto speaker;
+    }
+     if (snd_device == SND_DEVICE_OUT_VOICE_SPEAKER) {
+speaker:
+        ALOGE("%s: snd_device = %d usecase:%d", __func__, snd_device, usecase->id);
+        backend_tag_table[SND_DEVICE_OUT_SPEAKER] = strdup("speaker");
+        backend_tag_table[SND_DEVICE_OUT_VOICE_SPEAKER] = strdup("speaker");
+        goto result;
     }
 
     if((snd_device == SND_DEVICE_OUT_VOICE_SPEAKER_VBAT) &&
@@ -2054,8 +2105,7 @@ void platform_add_backend_name(char *mixer_path, snd_device_t snd_device,
         return;
     }
 
-    const char * suffix = backend_tag_table[snd_device];
-
+result:
     if (suffix != NULL) {
         strlcat(mixer_path, " ", MIXER_PATH_MAX_LENGTH);
         strlcat(mixer_path, suffix, MIXER_PATH_MAX_LENGTH);
@@ -3283,7 +3333,10 @@ snd_device_t platform_get_input_snd_device(void *platform, audio_devices_t out_d
                 } else if (in_device & AUDIO_DEVICE_IN_WIRED_HEADSET) {
                     snd_device = SND_DEVICE_IN_HEADSET_MIC_FLUENCE;
                 }
-                platform_set_echo_reference(adev, true, out_device);
+                if (out_device == AUDIO_DEVICE_OUT_SPEAKER)
+                    platform_set_echo_reference_skype_spk(adev, true, out_device);
+                else
+                    platform_set_echo_reference(adev, true, out_device);
             } else if (my_data->fluence_type != FLUENCE_NONE &&
                        adev->active_input->enable_aec) {
                 if (in_device & AUDIO_DEVICE_IN_BACK_MIC) {
