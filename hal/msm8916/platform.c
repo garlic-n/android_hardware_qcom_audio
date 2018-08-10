@@ -325,6 +325,7 @@ static const char * const device_table[SND_DEVICE_MAX] = {
     [SND_DEVICE_NONE] = "none",
     /* Playback sound devices */
     [SND_DEVICE_OUT_HANDSET] = "handset",
+    [SND_DEVICE_OUT_SPEAKER] = "speaker",
     [SND_DEVICE_OUT_SPEAKER_EXTERNAL_1] = "speaker-ext-1",
     [SND_DEVICE_OUT_SPEAKER_EXTERNAL_2] = "speaker-ext-2",
     [SND_DEVICE_OUT_SPEAKER_WSA] = "wsa-speaker",
@@ -333,6 +334,7 @@ static const char * const device_table[SND_DEVICE_MAX] = {
     [SND_DEVICE_OUT_HEADPHONES] = "headphones",
     [SND_DEVICE_OUT_HEADPHONES_44_1] = "headphones-44.1",
     [SND_DEVICE_OUT_LINE] = "line",
+    [SND_DEVICE_OUT_SPEAKER_AND_HEADPHONES] = "speaker-and-headphones",
     [SND_DEVICE_OUT_SPEAKER_AND_LINE] = "speaker-and-line",
     [SND_DEVICE_OUT_SPEAKER_AND_HEADPHONES_EXTERNAL_1] = "speaker-and-headphones-ext-1",
     [SND_DEVICE_OUT_SPEAKER_AND_HEADPHONES_EXTERNAL_2] = "speaker-and-headphones-ext-2",
@@ -375,7 +377,6 @@ static const char * const device_table[SND_DEVICE_MAX] = {
     /* Capture sound devices */
     [SND_DEVICE_IN_HANDSET_MIC] = "handset-mic",
     [SND_DEVICE_IN_HANDSET_MIC_EXTERNAL] = "handset-mic-ext",
-    [SND_DEVICE_IN_SKYPE_HEADSET_MIC] = "handset-mic",
     [SND_DEVICE_IN_HANDSET_MIC_AEC] = "handset-mic",
     [SND_DEVICE_IN_HANDSET_MIC_NS] = "handset-mic",
     [SND_DEVICE_IN_HANDSET_MIC_AEC_NS] = "handset-mic",
@@ -402,13 +403,11 @@ static const char * const device_table[SND_DEVICE_MAX] = {
     [SND_DEVICE_IN_BT_SCO_MIC_WB_NREC] = "bt-sco-mic-wb",
     [SND_DEVICE_IN_CAMCORDER_MIC] = "camcorder-mic",
     [SND_DEVICE_IN_VOICE_DMIC] = "voice-dmic-ef",
-    [SND_DEVICE_IN_SKYPE_DMIC] = "voice-dmic-ef",
     [SND_DEVICE_IN_VOICE_SPEAKER_DMIC] = "voice-speaker-dmic-ef",
     [SND_DEVICE_IN_VOICE_SPEAKER_QMIC] = "voice-speaker-qmic",
     [SND_DEVICE_IN_VOICE_TTY_FULL_HEADSET_MIC] = "voice-tty-full-headset-mic",
     [SND_DEVICE_IN_VOICE_TTY_VCO_HANDSET_MIC] = "voice-tty-vco-handset-mic",
     [SND_DEVICE_IN_VOICE_TTY_HCO_HEADSET_MIC] = "voice-tty-hco-headset-mic",
-    [SND_DEVICE_IN_VOICE_HANDSET_REC] = "voice-rec-mic",
     [SND_DEVICE_IN_VOICE_REC_MIC] = "voice-rec-mic",
     [SND_DEVICE_IN_VOICE_REC_MIC_NS] = "voice-rec-mic",
     [SND_DEVICE_IN_VOICE_REC_DMIC_STEREO] = "voice-rec-dmic-ef",
@@ -500,7 +499,6 @@ static int acdb_device_table[SND_DEVICE_MAX] = {
     [SND_DEVICE_IN_HANDSET_MIC_EXTERNAL] = 4,
     [SND_DEVICE_IN_HANDSET_MIC_AEC] = 106,
     [SND_DEVICE_IN_HANDSET_MIC_NS] = 107,
-    [SND_DEVICE_IN_SKYPE_HEADSET_MIC] = 107,
     [SND_DEVICE_IN_HANDSET_MIC_AEC_NS] = 108,
     [SND_DEVICE_IN_HANDSET_DMIC] = 41,
     [SND_DEVICE_IN_HANDSET_DMIC_AEC] = 109,
@@ -524,9 +522,7 @@ static int acdb_device_table[SND_DEVICE_MAX] = {
     [SND_DEVICE_IN_BT_SCO_MIC_WB] = 38,
     [SND_DEVICE_IN_BT_SCO_MIC_WB_NREC] = 123,
     [SND_DEVICE_IN_CAMCORDER_MIC] = 4,
-    [SND_DEVICE_IN_VOICE_HANDSET_REC] = 40,
     [SND_DEVICE_IN_VOICE_DMIC] = 41,
-    [SND_DEVICE_IN_SKYPE_DMIC] = 118,
     [SND_DEVICE_IN_VOICE_SPEAKER_DMIC] = 43,
     [SND_DEVICE_IN_VOICE_SPEAKER_QMIC] = 19,
     [SND_DEVICE_IN_VOICE_TTY_FULL_HEADSET_MIC] = 16,
@@ -625,7 +621,6 @@ static struct name_to_index snd_device_name_index[SND_DEVICE_MAX] = {
     {TO_NAME_INDEX(SND_DEVICE_IN_HANDSET_MIC_EXTERNAL)},
     {TO_NAME_INDEX(SND_DEVICE_IN_HANDSET_MIC_AEC)},
     {TO_NAME_INDEX(SND_DEVICE_IN_HANDSET_MIC_NS)},
-    {TO_NAME_INDEX(SND_DEVICE_IN_SKYPE_HEADSET_MIC)},
     {TO_NAME_INDEX(SND_DEVICE_IN_HANDSET_MIC_AEC_NS)},
     {TO_NAME_INDEX(SND_DEVICE_IN_HANDSET_DMIC)},
     {TO_NAME_INDEX(SND_DEVICE_IN_HANDSET_DMIC_AEC)},
@@ -649,9 +644,7 @@ static struct name_to_index snd_device_name_index[SND_DEVICE_MAX] = {
     {TO_NAME_INDEX(SND_DEVICE_IN_BT_SCO_MIC_WB)},
     {TO_NAME_INDEX(SND_DEVICE_IN_BT_SCO_MIC_WB_NREC)},
     {TO_NAME_INDEX(SND_DEVICE_IN_CAMCORDER_MIC)},
-    {TO_NAME_INDEX(SND_DEVICE_IN_VOICE_HANDSET_REC)},
     {TO_NAME_INDEX(SND_DEVICE_IN_VOICE_DMIC)},
-    {TO_NAME_INDEX(SND_DEVICE_IN_SKYPE_DMIC)},
     {TO_NAME_INDEX(SND_DEVICE_IN_VOICE_SPEAKER_DMIC)},
     {TO_NAME_INDEX(SND_DEVICE_IN_VOICE_SPEAKER_QMIC)},
     {TO_NAME_INDEX(SND_DEVICE_IN_VOICE_TTY_FULL_HEADSET_MIC)},
@@ -1158,36 +1151,6 @@ void platform_set_echo_reference(struct audio_device *adev, bool enable,
             my_data->ec_ref_mixer_path);
     }
 }
-
-void platform_set_echo_reference_skype_spk(struct audio_device *adev, bool enable,
-                                 audio_devices_t out_device __unused)
-{
-    struct platform_data *my_data = (struct platform_data *)adev->platform;
-
-    if (strcmp(my_data->ec_ref_mixer_path, "")) {
-        ALOGV("%s: disabling %s", __func__, my_data->ec_ref_mixer_path);
-        audio_route_reset_and_update_path(adev->audio_route,
-            my_data->ec_ref_mixer_path);
-    }
-
-    if (enable) {
-        if (adev->snd_dev_ref_cnt[SND_DEVICE_OUT_HEADPHONES_44_1] > 0)
-            strlcpy(my_data->ec_ref_mixer_path, "echo-reference headphones-44.1",
-                sizeof(my_data->ec_ref_mixer_path));
-        else if (adev->snd_dev_ref_cnt[SND_DEVICE_OUT_SPEAKER_VBAT] > 0)
-            strlcpy(my_data->ec_ref_mixer_path, "vbat-speaker echo-reference",
-                sizeof(my_data->ec_ref_mixer_path));
-        else
-            strlcpy(my_data->ec_ref_mixer_path, "echo-reference-tinno-skype",
-                sizeof(my_data->ec_ref_mixer_path));
-
-
-        ALOGD("%s: enabling %s", __func__, my_data->ec_ref_mixer_path);
-        audio_route_apply_and_update_path(adev->audio_route,
-            my_data->ec_ref_mixer_path);
-    }
-}
-
 void platform_set_gsm_mode(void *platform, bool enable)
 {
     struct platform_data *my_data = (struct platform_data *)platform;
@@ -1253,11 +1216,6 @@ static void set_platform_defaults(struct platform_data * my_data)
     backend_tag_table[SND_DEVICE_OUT_VOICE_SPEAKER_VBAT] = strdup("vbat-voice-speaker");
     backend_tag_table[SND_DEVICE_OUT_BT_A2DP] = strdup("bt-a2dp");
     backend_tag_table[SND_DEVICE_OUT_SPEAKER_AND_BT_A2DP] = strdup("speaker-and-bt-a2dp");
-
-    // Tinno
-    backend_tag_table[SND_DEVICE_OUT_SPEAKER] = strdup("speaker");
-    backend_tag_table[SND_DEVICE_OUT_VOICE_SPEAKER] = strdup("speaker");
-    backend_tag_table[SND_DEVICE_OUT_SPEAKER_AND_HEADPHONES] = strdup("speaker-and-headphones");
 
     hw_interface_table[SND_DEVICE_OUT_HDMI] = strdup("HDMI_RX");
     hw_interface_table[SND_DEVICE_OUT_SPEAKER_AND_HDMI] = strdup("SLIMBUS_0_RX-and-HDMI_RX");
@@ -2085,31 +2043,9 @@ int platform_get_snd_device_name_extn(void *platform, snd_device_t snd_device,
 void platform_add_backend_name(char *mixer_path, snd_device_t snd_device,
                                struct audio_usecase *usecase)
 {
-    const char * suffix = backend_tag_table[snd_device];
-
     if ((snd_device < SND_DEVICE_MIN) || (snd_device >= SND_DEVICE_MAX)) {
         ALOGE("%s: Invalid snd_device = %d", __func__, snd_device);
         return;
-    }
-
-    if (snd_device <= SND_DEVICE_OUT_VOICE_HANDSET) {
-        if (snd_device != SND_DEVICE_OUT_SPEAKER) {
-            if (snd_device == SND_DEVICE_OUT_SPEAKER_AND_HEADPHONES) {
-                ALOGE("%s: snd_device = %d usecase:%d", __func__, snd_device, usecase->id);
-                backend_tag_table[SND_DEVICE_OUT_SPEAKER_AND_HEADPHONES] =
-                    strdup("speaker-and-headphones");
-            }
-            goto result;
-        }
-        goto speaker;
-    }
-
-    if (snd_device == SND_DEVICE_OUT_VOICE_SPEAKER) {
-speaker:
-        ALOGE("%s: snd_device = %d usecase:%d", __func__, snd_device, usecase->id);
-        backend_tag_table[SND_DEVICE_OUT_SPEAKER] = strdup("speaker");
-        backend_tag_table[SND_DEVICE_OUT_VOICE_SPEAKER] = strdup("speaker");
-        goto result;
     }
 
     if((snd_device == SND_DEVICE_OUT_VOICE_SPEAKER_VBAT) &&
@@ -2118,7 +2054,8 @@ speaker:
         return;
     }
 
-result:
+    const char * suffix = backend_tag_table[snd_device];
+
     if (suffix != NULL) {
         strlcat(mixer_path, " ", MIXER_PATH_MAX_LENGTH);
         strlcat(mixer_path, suffix, MIXER_PATH_MAX_LENGTH);
@@ -2136,15 +2073,11 @@ bool platform_check_backends_match(snd_device_t snd_device1, snd_device_t snd_de
     if ((snd_device1 < SND_DEVICE_MIN) || (snd_device1 >= SND_DEVICE_OUT_END)) {
         ALOGE("%s: Invalid snd_device = %s", __func__,
                 platform_get_snd_device_name(snd_device1));
-        ALOGE("%s: Invalid snd_device1 = %d", __func__,
-                snd_device1);
         return false;
     }
     if ((snd_device2 < SND_DEVICE_MIN) || (snd_device2 >= SND_DEVICE_OUT_END)) {
         ALOGE("%s: Invalid snd_device = %s", __func__,
                 platform_get_snd_device_name(snd_device2));
-        ALOGE("%s: Invalid snd_device2 = %d", __func__,
-                snd_device2);
         return false;
     }
     const char * be_itf1 = hw_interface_table[snd_device1];
@@ -3152,7 +3085,6 @@ snd_device_t platform_get_input_snd_device(void *platform, audio_devices_t out_d
     audio_channel_mask_t channel_mask = (adev->active_input == NULL) ?
                                 AUDIO_CHANNEL_IN_MONO : adev->active_input->channel_mask;
     snd_device_t snd_device = SND_DEVICE_NONE;
-    int use_skype_speaker = 0;
     int channel_count = popcount(channel_mask);
 
     ALOGV("%s: enter: out_device(%#x) in_device(%#x) channel_count (%d) channel_mask (0x%x)",
@@ -3204,28 +3136,23 @@ snd_device_t platform_get_input_snd_device(void *platform, audio_devices_t out_d
                 audio_extn_should_use_handset_anc(channel_count) &&
                 my_data->fluence_type != FLUENCE_NONE &&
                 my_data->source_mic_type & SOURCE_DUAL_MIC) {
-                use_skype_speaker = 0;
                 snd_device = SND_DEVICE_IN_VOICE_FLUENCE_DMIC_AANC;
                 adev->acdb_settings |= DMIC_FLAG;
                 ALOGD("Selecting AANC, Fluence combo device");
             } else if (out_device & AUDIO_DEVICE_OUT_EARPIECE &&
                 audio_extn_should_use_handset_anc(channel_count)) {
-                use_skype_speaker = 0;
                 snd_device = SND_DEVICE_IN_AANC_HANDSET_MIC;
                 adev->acdb_settings |= ANC_FLAG;
             } else if (my_data->fluence_type == FLUENCE_NONE ||
                 my_data->fluence_in_voice_call == false) {
-                use_skype_speaker = 0;
                 snd_device = SND_DEVICE_IN_HANDSET_MIC;
                 if (audio_extn_hfp_is_active(adev))
                     platform_set_echo_reference(adev, true, out_device);
             } else {
-                use_skype_speaker = 0;
                 snd_device = SND_DEVICE_IN_VOICE_DMIC;
                 adev->acdb_settings |= DMIC_FLAG;
             }
         } else if (out_device & AUDIO_DEVICE_OUT_WIRED_HEADSET) {
-            use_skype_speaker = 0;
             snd_device = SND_DEVICE_IN_VOICE_HEADSET_MIC;
             if (audio_extn_hfp_is_active(adev))
                 platform_set_echo_reference(adev, true, out_device);
@@ -3235,13 +3162,11 @@ snd_device_t platform_get_input_snd_device(void *platform, audio_devices_t out_d
                     snd_device = SND_DEVICE_IN_BT_SCO_MIC_WB_NREC;
                 else
                     snd_device = SND_DEVICE_IN_BT_SCO_MIC_WB;
-                use_skype_speaker = 0;
             } else {
                 if (adev->bluetooth_nrec)
                     snd_device = SND_DEVICE_IN_BT_SCO_MIC_NREC;
                 else
                     snd_device = SND_DEVICE_IN_BT_SCO_MIC;
-                use_skype_speaker = 0;
             }
         } else if (out_device & AUDIO_DEVICE_OUT_SPEAKER) {
             if (my_data->fluence_type != FLUENCE_NONE &&
@@ -3257,19 +3182,15 @@ snd_device_t platform_get_input_snd_device(void *platform, audio_devices_t out_d
                        snd_device = SND_DEVICE_IN_VOICE_SPEAKER_DMIC_BROADSIDE;
                     else
                        snd_device = SND_DEVICE_IN_VOICE_SPEAKER_DMIC;
-                    use_skype_speaker = 0;
                 }
             } else {
-                use_skype_speaker = 0;
                 snd_device = SND_DEVICE_IN_VOICE_SPEAKER_MIC;
                 if (audio_extn_hfp_is_active(adev))
                     platform_set_echo_reference(adev, true, out_device);
             }
-        } else if (out_device & AUDIO_DEVICE_OUT_TELEPHONY_TX) {
+        } else if (out_device & AUDIO_DEVICE_OUT_TELEPHONY_TX)
             snd_device = SND_DEVICE_IN_VOICE_RX;
-        }
     } else if (source == AUDIO_SOURCE_CAMCORDER) {
-        use_skype_speaker = 0;
         if (in_device & AUDIO_DEVICE_IN_BUILTIN_MIC ||
             in_device & AUDIO_DEVICE_IN_BACK_MIC) {
             if ((my_data->fluence_type & FLUENCE_DUAL_MIC) &&
@@ -3284,11 +3205,9 @@ snd_device_t platform_get_input_snd_device(void *platform, audio_devices_t out_d
             if (my_data->fluence_in_voice_rec && channel_count == 1) {
                 if ((my_data->fluence_type & FLUENCE_QUAD_MIC) &&
                     (my_data->source_mic_type & SOURCE_QUAD_MIC)) {
-                     use_skype_speaker = 0;
                      snd_device = SND_DEVICE_IN_HANDSET_QMIC;
                 } else if ((my_data->fluence_type & FLUENCE_QUAD_MIC) &&
                     (my_data->source_mic_type & SOURCE_THREE_MIC)) {
-                    use_skype_speaker = 0;
                     snd_device = SND_DEVICE_IN_HANDSET_TMIC;
                 } else if ((my_data->fluence_type & FLUENCE_DUAL_MIC) &&
                     (my_data->source_mic_type & SOURCE_DUAL_MIC)) {
@@ -3307,7 +3226,6 @@ snd_device_t platform_get_input_snd_device(void *platform, audio_devices_t out_d
                 snd_device = SND_DEVICE_IN_QUAD_MIC;
             }
             if (snd_device == SND_DEVICE_NONE) {
-                use_skype_speaker = 0;
                 if (adev->active_input->enable_ns)
                     snd_device = SND_DEVICE_IN_VOICE_REC_MIC_NS;
                 else
@@ -3329,10 +3247,8 @@ snd_device_t platform_get_input_snd_device(void *platform, audio_devices_t out_d
             } else {
                 snd_device = SND_DEVICE_IN_UNPROCESSED_MIC;
             }
-            use_skype_speaker = 0;
         } else if (in_device & AUDIO_DEVICE_IN_WIRED_HEADSET) {
             snd_device = SND_DEVICE_IN_UNPROCESSED_HEADSET_MIC;
-            use_skype_speaker = 0;
         }
     } else if ((source == AUDIO_SOURCE_VOICE_COMMUNICATION) ||
               (mode == AUDIO_MODE_IN_COMMUNICATION)) {
@@ -3362,17 +3278,12 @@ snd_device_t platform_get_input_snd_device(void *platform, audio_devices_t out_d
                         (my_data->source_mic_type & SOURCE_DUAL_MIC)) {
                         snd_device = SND_DEVICE_IN_HANDSET_DMIC_AEC_NS;
                         adev->acdb_settings |= DMIC_FLAG;
-                    } else {
-                        snd_device = SND_DEVICE_IN_HANDSET_MIC_NS;
-                    }
+                    } else
+                        snd_device = SND_DEVICE_IN_HANDSET_MIC_AEC_NS;
                 } else if (in_device & AUDIO_DEVICE_IN_WIRED_HEADSET) {
                     snd_device = SND_DEVICE_IN_HEADSET_MIC_FLUENCE;
                 }
-                use_skype_speaker = 1;
-                if (out_device == AUDIO_DEVICE_OUT_SPEAKER)
-                    platform_set_echo_reference_skype_spk(adev, true, out_device);
-                else
-                    platform_set_echo_reference(adev, true, out_device);
+                platform_set_echo_reference(adev, true, out_device);
             } else if (my_data->fluence_type != FLUENCE_NONE &&
                        adev->active_input->enable_aec) {
                 if (in_device & AUDIO_DEVICE_IN_BACK_MIC) {
@@ -3388,20 +3299,16 @@ snd_device_t platform_get_input_snd_device(void *platform, audio_devices_t out_d
                                 snd_device = SND_DEVICE_IN_SPEAKER_DMIC_AEC;
                         }
                         adev->acdb_settings |= DMIC_FLAG;
-                    } else {
-                        use_skype_speaker = 0;
+                    } else
                         snd_device = SND_DEVICE_IN_SPEAKER_MIC_AEC;
-                    }
                 } else if (in_device & AUDIO_DEVICE_IN_BUILTIN_MIC) {
                     if ((my_data->fluence_type & FLUENCE_DUAL_MIC) &&
                         (my_data->source_mic_type & SOURCE_DUAL_MIC)) {
-                        use_skype_speaker = 0;
                         snd_device = SND_DEVICE_IN_HANDSET_DMIC_AEC;
                         adev->acdb_settings |= DMIC_FLAG;
                     } else
-                        snd_device = SND_DEVICE_IN_HANDSET_MIC_AEC_NS;
+                        snd_device = SND_DEVICE_IN_HANDSET_MIC_AEC;
                 } else if (in_device & AUDIO_DEVICE_IN_WIRED_HEADSET) {
-                    use_skype_speaker = 0;
                     snd_device = SND_DEVICE_IN_HEADSET_MIC_FLUENCE;
                 }
                 platform_set_echo_reference(adev, true, out_device);
@@ -3421,7 +3328,7 @@ snd_device_t platform_get_input_snd_device(void *platform, audio_devices_t out_d
                         }
                         adev->acdb_settings |= DMIC_FLAG;
                     } else
-                        snd_device = SND_DEVICE_IN_SKYPE_HEADSET_MIC;
+                        snd_device = SND_DEVICE_IN_SPEAKER_MIC_NS;
                 } else if (in_device & AUDIO_DEVICE_IN_BUILTIN_MIC) {
                     if ((my_data->fluence_type & FLUENCE_DUAL_MIC) &&
                         (my_data->source_mic_type & SOURCE_DUAL_MIC)) {
@@ -3432,7 +3339,6 @@ snd_device_t platform_get_input_snd_device(void *platform, audio_devices_t out_d
                 } else if (in_device & AUDIO_DEVICE_IN_WIRED_HEADSET) {
                     snd_device = SND_DEVICE_IN_HEADSET_MIC_FLUENCE;
                 }
-                use_skype_speaker = 0;
                 platform_set_echo_reference(adev, false, out_device);
             } else
                 platform_set_echo_reference(adev, false, out_device);
@@ -3441,7 +3347,6 @@ snd_device_t platform_get_input_snd_device(void *platform, audio_devices_t out_d
         if (in_device & AUDIO_DEVICE_IN_BUILTIN_MIC &&
                 channel_count == 1 ) {
             if(my_data->fluence_in_audio_rec) {
-                use_skype_speaker = 0;
                 if ((my_data->fluence_type & FLUENCE_QUAD_MIC) &&
                     (my_data->source_mic_type & SOURCE_QUAD_MIC)) {
                     snd_device = SND_DEVICE_IN_HANDSET_QMIC;
@@ -3451,7 +3356,6 @@ snd_device_t platform_get_input_snd_device(void *platform, audio_devices_t out_d
                     snd_device = SND_DEVICE_IN_HANDSET_TMIC;
                 } else if ((my_data->fluence_type & FLUENCE_DUAL_MIC) &&
                     (my_data->source_mic_type & SOURCE_DUAL_MIC)) {
-                    use_skype_speaker = 0;
                     snd_device = SND_DEVICE_IN_HANDSET_DMIC;
                     platform_set_echo_reference(adev, true, out_device);
                 }
@@ -3479,11 +3383,8 @@ snd_device_t platform_get_input_snd_device(void *platform, audio_devices_t out_d
             else if ((my_data->fluence_type & (FLUENCE_DUAL_MIC | FLUENCE_QUAD_MIC)) &&
                     (channel_count == 2) && (my_data->source_mic_type & SOURCE_DUAL_MIC))
                 snd_device = SND_DEVICE_IN_HANDSET_STEREO_DMIC;
-            else {
+            else
                 snd_device = SND_DEVICE_IN_HANDSET_MIC;
-                 if (use_skype_speaker == 1)
-                     snd_device = SND_DEVICE_IN_SKYPE_DMIC;
-            }
         } else if (in_device & AUDIO_DEVICE_IN_BACK_MIC) {
             snd_device = SND_DEVICE_IN_SPEAKER_MIC;
         } else if (in_device & AUDIO_DEVICE_IN_WIRED_HEADSET) {
@@ -3519,8 +3420,6 @@ snd_device_t platform_get_input_snd_device(void *platform, audio_devices_t out_d
             snd_device = SND_DEVICE_IN_HANDSET_MIC;
         } else if (out_device & AUDIO_DEVICE_OUT_WIRED_HEADSET) {
             snd_device = SND_DEVICE_IN_HEADSET_MIC;
-            if (use_skype_speaker == 1)
-                snd_device = SND_DEVICE_IN_HANDSET_MIC_AEC;
         } else if (out_device & AUDIO_DEVICE_OUT_SPEAKER) {
             if ((channel_count > 1) && (my_data->source_mic_type & SOURCE_DUAL_MIC))
                 snd_device = SND_DEVICE_IN_SPEAKER_STEREO_DMIC;
